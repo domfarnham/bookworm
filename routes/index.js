@@ -24,14 +24,29 @@ router.get('/register', (req, res, next) => {
 router.post('/register', (req, res, next) => {
   if (req.body.email &&
     req.body.name &&
-    req.body.fovoriteBook &&
+    req.body.favoriteBook &&
     req.body.password &&
     req.body.confirmPassword) {
     if (req.body.password !== req.body.confirmPassword) {
       const err = new Error('Passwords do not match.')
       err.status = 400
-      next(err)
+      return next(err)
     }
+
+    const userData = {
+      email: req.body.email,
+      name: req.body.name,
+      favoriteBook: req.body.favoriteBook,
+      password: req.body.password
+    }
+
+    User.create(userData, (err, user) => {
+      if (err) {
+        return next(err)
+      } else {
+        return res.redirect('/profile')
+      }
+    })
   } else {
     const err = new Error('All fields required.')
     err.status = 400
