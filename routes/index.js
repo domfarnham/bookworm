@@ -44,6 +44,7 @@ router.post('/register', (req, res, next) => {
       if (err) {
         return next(err)
       } else {
+        req.session.userId = user._id
         return res.redirect('/profile')
       }
     })
@@ -59,7 +60,26 @@ router.get('/login', (req, res, next) => {
 })
 
 router.post('/login', (req, res, next) => {
-  return res.send('Logged In.')
+  if (req.body.email && req.body.password) {
+    User.authenticate(req.body.email, req.body.password, (err, user) => {
+      if (err || !user) {
+        const err = new Error('Wrong email or password.')
+        err.status = 401
+        return next(err)
+      } else {
+        req.session.userId = user._id
+        return res.redirect('/profile')
+      }
+    })
+  } else {
+    const err = new Error('Email and password are required.')
+    err.status = 400
+    return next(err)
+  }
+})
+
+router.get('/profile', (req, res, next) => {
+  res.send('Welcome to your profile')
 })
 
 module.exports = router
