@@ -79,7 +79,19 @@ router.post('/login', (req, res, next) => {
 })
 
 router.get('/profile', (req, res, next) => {
-  res.send('Welcome to your profile')
+  if (!req.session.userId) {
+    const err = new Error('You are not authorized to view this page.')
+    err.status = 403
+    return next(err)
+  }
+  User.findById(req.session.userId)
+    .exec((err, user) => {
+      if (err) {
+        return next(err)
+      } else {
+        return res.render('profile', { title: 'Profile', name: user.name, favorite: user.favoriteBook })
+      }
+    })
 })
 
 module.exports = router
