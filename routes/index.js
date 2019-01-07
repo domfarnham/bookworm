@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
+const mid = require('../middleware')
 
 // GET /
 router.get('/', (req, res, next) => {
@@ -17,7 +18,7 @@ router.get('/contact', (req, res, next) => {
   return res.render('contact', { title: 'Contact' })
 })
 
-router.get('/register', (req, res, next) => {
+router.get('/register', mid.loggedOut, (req, res, next) => {
   return res.render('register', { title: 'Sign UP' })
 })
 
@@ -55,7 +56,7 @@ router.post('/register', (req, res, next) => {
   }
 })
 
-router.get('/login', (req, res, next) => {
+router.get('/login', mid.loggedOut, (req, res, next) => {
   return res.render('login', { title: 'Log In' })
 })
 
@@ -78,12 +79,7 @@ router.post('/login', (req, res, next) => {
   }
 })
 
-router.get('/profile', (req, res, next) => {
-  if (!req.session.userId) {
-    const err = new Error('You are not authorized to view this page.')
-    err.status = 403
-    return next(err)
-  }
+router.get('/profile', mid.requiresLogin, (req, res, next) => {
   User.findById(req.session.userId)
     .exec((err, user) => {
       if (err) {
@@ -92,6 +88,18 @@ router.get('/profile', (req, res, next) => {
         return res.render('profile', { title: 'Profile', name: user.name, favorite: user.favoriteBook })
       }
     })
+})
+
+router.get('/logout', (req, res, next) => {
+  if (req.session) {
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err)
+      } else {
+        return res.redirect('/')
+      }
+    })
+  }
 })
 
 module.exports = router
