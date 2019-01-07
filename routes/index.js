@@ -54,4 +54,12 @@ router.post('/register', (req, res, next) => {
   }
 })
 
+router.get('/login', (req, res, next) => {
+  return res.render('login', { title: 'Log In' })
+})
+
+router.post('/login', (req, res, next) => {
+  return res.send('Logged In.')
+})
+
 module.exports = router

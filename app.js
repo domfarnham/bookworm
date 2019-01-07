@@ -3,6 +3,13 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const app = express()
 const path = require('path')
+const session = require('express-session')
+
+app.use(session({
+  secret: 'asdfhjsadfuenfo',
+  resave: true,
+  saveUninitialized: false
+}))
 
 mongoose.connect('mongodb://localhost:27017/bookworm')
 const db = mongoose.connection
