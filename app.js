@@ -6,10 +6,12 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const app = express()
 
+// Connect to DB
 mongoose.connect('mongodb://localhost:27017/bookworm')
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 
+// Session middleware
 app.use(session({
   secret: 'asdfhjsadfuenfo',
   resave: true,
