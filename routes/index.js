@@ -18,10 +18,12 @@ router.get('/contact', (req, res, next) => {
   return res.render('contact', { title: 'Contact' })
 })
 
+// GET /register
 router.get('/register', mid.loggedOut, (req, res, next) => {
   return res.render('register', { title: 'Sign UP' })
 })
 
+// POST /register
 router.post('/register', (req, res, next) => {
   if (req.body.email &&
     req.body.name &&
@@ -56,10 +58,12 @@ router.post('/register', (req, res, next) => {
   }
 })
 
+// GET /login
 router.get('/login', mid.loggedOut, (req, res, next) => {
   return res.render('login', { title: 'Log In' })
 })
 
+// POST /login
 router.post('/login', (req, res, next) => {
   if (req.body.email && req.body.password) {
     User.authenticate(req.body.email, req.body.password, (err, user) => {
@@ -79,6 +83,7 @@ router.post('/login', (req, res, next) => {
   }
 })
 
+// GET /profile
 router.get('/profile', mid.requiresLogin, (req, res, next) => {
   User.findById(req.session.userId)
     .exec((err, user) => {
@@ -90,6 +95,7 @@ router.get('/profile', mid.requiresLogin, (req, res, next) => {
     })
 })
 
+// GET /logout
 router.get('/logout', (req, res, next) => {
   if (req.session) {
     req.session.destroy((err) => {
